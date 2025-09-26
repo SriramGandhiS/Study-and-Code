@@ -1,0 +1,230 @@
+package javaapplication2;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+
+public class Java_tic_tac_toe extends javax.swing.JFrame {
+
+    public Java_tic_tac_toe() {
+        initComponents();
+        addAction();
+    }
+
+    boolean win = false;
+    int x_or_o = 0;
+
+    public void winEffect(JButton b1, JButton b2, JButton b3) {
+        b1.setBackground(Color.BLACK);
+        b2.setBackground(Color.BLACK);
+        b3.setBackground(Color.BLACK);
+
+        b1.setForeground(Color.WHITE);
+        b2.setForeground(Color.WHITE);
+        b3.setForeground(Color.WHITE);
+
+        String msg = b1.getText() + " Is The Winner";
+        jLabelMSG.setText(msg);
+        jLabelMSG.setForeground(new Color(255, 215, 0)); // Optional: gold color
+        win = true;
+
+        // Disable all buttons
+        Component[] comps = jPanel1.getComponents();
+        for (Component comp : comps) {
+            if (comp instanceof JButton) {
+                comp.setEnabled(false);
+            }
+        }
+    }
+
+    public void getTheWinner() {
+        if (!jButton1.getText().equals("") && jButton1.getText().equals(jButton2.getText()) && jButton1.getText().equals(jButton3.getText())) {
+            winEffect(jButton1, jButton2, jButton3);
+        } else if (!jButton4.getText().equals("") && jButton4.getText().equals(jButton5.getText()) && jButton4.getText().equals(jButton6.getText())) {
+            winEffect(jButton4, jButton5, jButton6);
+        } else if (!jButton7.getText().equals("") && jButton7.getText().equals(jButton8.getText()) && jButton7.getText().equals(jButton9.getText())) {
+            winEffect(jButton7, jButton8, jButton9);
+        } else if (!jButton1.getText().equals("") && jButton1.getText().equals(jButton4.getText()) && jButton1.getText().equals(jButton7.getText())) {
+            winEffect(jButton1, jButton4, jButton7);
+        } else if (!jButton2.getText().equals("") && jButton2.getText().equals(jButton5.getText()) && jButton2.getText().equals(jButton8.getText())) {
+            winEffect(jButton2, jButton5, jButton8);
+        } else if (!jButton3.getText().equals("") && jButton3.getText().equals(jButton6.getText()) && jButton3.getText().equals(jButton9.getText())) {
+            winEffect(jButton3, jButton6, jButton9);
+        } else if (!jButton1.getText().equals("") && jButton1.getText().equals(jButton5.getText()) && jButton1.getText().equals(jButton9.getText())) {
+            winEffect(jButton1, jButton5, jButton9);
+        } else if (!jButton3.getText().equals("") && jButton3.getText().equals(jButton5.getText()) && jButton3.getText().equals(jButton7.getText())) {
+            winEffect(jButton3, jButton5, jButton7);
+        } else if (allButtonsTextLength() == 9 && !win) {
+            jLabelMSG.setText("No One Wins");
+        }
+    }
+
+    public int allButtonsTextLength() {
+        String txt = "";
+        Component[] comps = jPanel1.getComponents();
+        for (Component comp : comps) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                txt += button.getText();
+            }
+        }
+        return txt.length();
+    }
+
+    public ActionListener createAction(JButton button) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (button.getText().equals("") && !win) {
+                    if ((x_or_o % 2) == 0) {
+                        button.setText("X");
+                        button.setForeground(Color.BLUE);
+                        jLabelMSG.setText("O turn now");
+                    } else {
+                        button.setText("O");
+                        button.setForeground(Color.RED);
+                        jLabelMSG.setText("X turn now");
+                    }
+                    getTheWinner();
+                    x_or_o++;
+                }
+            }
+        };
+    }
+
+    public void addAction() {
+        Component[] comps = jPanel1.getComponents();
+        for (Component comp : comps) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                button.addActionListener(createAction(button));
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabelMSG = new javax.swing.JLabel();
+        jButtonReplay = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        java.awt.Font font = new java.awt.Font("Tahoma", 1, 30);
+        for (JButton btn : new JButton[]{jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9}) {
+            btn.setBackground(Color.WHITE);
+            btn.setFont(font);
+            btn.setBorder(null);
+        }
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jButton1, 65, 65, 65)
+                                                .addGap(6)
+                                                .addComponent(jButton2, 65, 65, 65)
+                                                .addGap(6)
+                                                .addComponent(jButton3, 65, 65, 65))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jButton4, 65, 65, 65)
+                                                .addGap(6)
+                                                .addComponent(jButton5, 65, 65, 65)
+                                                .addGap(6)
+                                                .addComponent(jButton6, 65, 65, 65))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jButton7, 65, 65, 65)
+                                                .addGap(6)
+                                                .addComponent(jButton8, 65, 65, 65)
+                                                .addGap(6)
+                                                .addComponent(jButton9, 65, 65, 65)))
+                                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+                jPanel1Layout.createSequentialGroup()
+                        .addGap(10)
+                        .addGroup(jPanel1Layout.createParallelGroup()
+                                .addComponent(jButton1, 60, 60, 60)
+                                .addComponent(jButton2, 60, 60, 60)
+                                .addComponent(jButton3, 60, 60, 60))
+                        .addGap(6)
+                        .addGroup(jPanel1Layout.createParallelGroup()
+                                .addComponent(jButton4, 60, 60, 60)
+                                .addComponent(jButton5, 60, 60, 60)
+                                .addComponent(jButton6, 60, 60, 60))
+                        .addGap(6)
+                        .addGroup(jPanel1Layout.createParallelGroup()
+                                .addComponent(jButton7, 60, 60, 60)
+                                .addComponent(jButton8, 60, 60, 60)
+                                .addComponent(jButton9, 60, 60, 60))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(255, 0, 51));
+        jLabelMSG.setFont(new java.awt.Font("Tahoma", 1, 24));
+        jLabelMSG.setForeground(Color.WHITE);
+        jLabelMSG.setText("Play");
+        jPanel2.add(jLabelMSG);
+
+        jButtonReplay.setBackground(new java.awt.Color(46, 204, 113));
+        jButtonReplay.setFont(new java.awt.Font("Tahoma", 0, 24));
+        jButtonReplay.setForeground(Color.WHITE);
+        jButtonReplay.setText("Replay");
+        jButtonReplay.addActionListener(evt -> {
+            win = false;
+            x_or_o = 0;
+            jLabelMSG.setText("Play");
+            jLabelMSG.setForeground(Color.WHITE);
+            Component[] comps = jPanel1.getComponents();
+            for (Component comp : comps) {
+                if (comp instanceof JButton) {
+                    JButton button = (JButton) comp;
+                    button.setText("");
+                    button.setBackground(Color.WHITE);
+                    button.setEnabled(true);
+                }
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1)
+                .addComponent(jButtonReplay, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE));
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, 50, 50, 50)
+                .addComponent(jPanel1)
+                .addGap(10)
+                .addComponent(jButtonReplay, 40, 40, 40)
+                .addGap(10));
+
+        pack();
+    }
+
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> new Java_tic_tac_toe().setVisible(true));
+    }
+
+    // Variables declaration
+    private javax.swing.JButton jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7, jButton8, jButton9;
+    private javax.swing.JButton jButtonReplay;
+    private javax.swing.JLabel jLabelMSG;
+    private javax.swing.JPanel jPanel1, jPanel2;
+}
