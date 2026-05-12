@@ -1,40 +1,30 @@
-# Study-and-Code
-"A collection of my college projects, certificate challenge solutions, and practice work from various topics I'm learning and building skills in."
-# My Computer Science Learning Repository
+# Study and Code: Academic & Technical Repository
 
-Welcome to my personal learning repository!
+Proprietary Software by Sriram S.
 
-This space is dedicated to my ongoing journey through computer science topics and practical challenges, mainly related to my college coursework, certificate programs, and personal practice. I use this repository to track my progress, organize my solutions, and reflect on what I've learned.
+## Overview
+This repository serves as a centralized hub for my academic projects, technical certifications, and daily coding practice. It tracks my journey through computer science, capturing the evolution of my skills in software development, database management, and algorithm design.
 
-## 📚 What You'll Find Here
+## Repository Categories
 
-- ✅ **SQL Practice**  
-  Solutions to problems from platforms like HackerRank, where I’ve been working through various difficulty levels to improve my database querying skills.
+### 📂 Academic Projects
+- **Tic Tac Toe (Java)**: A classic implementation of the Tic Tac Toe game developed using Java.
+- **Java Password Generator**: A desktop application built with Java Swing GUI for generating secure passwords based on user-selected criteria.
 
-- ✅ **College Assignments & Mini Projects**  
-  Code and documentation from academic projects, labs, and practicals.
+### 📊 Database & SQL Practice
+- **Country Codes Management**: SQL scripts for managing and querying international country code data.
+- **Profitable Stocks Analysis**: Advanced SQL queries designed for financial data analysis and identifying profitable stock trends.
 
-- ✅ **Certificate Challenge Solutions**  
-  Files and screenshots related to coding challenges or assessments completed during certification programs.
+### 📜 Certifications & Challenges
+- Solutions to various certificate challenges and platform-specific coding assessments (LeetCode, HackerRank, etc.).
 
-- ✅ **Screenshots & Notes**  
-  Helpful visual references from my completed challenges, and notes I’ve taken from online tutorials (especially from YouTube when I needed help).
+## Technical Practice
+- Ongoing practice in algorithms, data structures, and various programming languages including Java, SQL, and more.
 
-## 🎯 Why I Created This Repository
+## Proprietary Notice
+This project is the private intellectual property of Sriram S and is not open-sourced for public use or distribution. 
 
-As a student, I believe in learning by doing. This repository helps me:
-- Keep track of everything I’m working on
-- Build a public record of my growth and consistency
-- Share my work with others, including recruiters or mentors
-- Get comfortable with Git and GitHub, which are industry standards
+For inquiries or professional collaboration, please contact Sriram S via the official website: [sriram.website](https://sriram.website/)
 
-## 🚀 What's Next
-
-I’ll continue updating this repo as I learn more—especially as I go deeper into topics like:
-- Database management
-- Problem-solving through code
-- Web development and tools
-
-Feel free to explore the files, and if you have any tips or feedback, I’d love to hear from you.
-
-Thanks for stopping by!
+---
+Made by Sriram S - Proprietary Property
