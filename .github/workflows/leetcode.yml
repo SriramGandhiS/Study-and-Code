@@ -1,0 +1,68 @@
+name: LeetCode Hourly Solver
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs hourly
+  workflow_dispatch:     # Allows manual triggering
+    inputs:
+      test_mode:
+        description: 'Bypass delays and run test solver (true/false)'
+        required: false
+        default: 'false'
+      test_limit:
+        description: 'Number of problems to solve in test run'
+        required: false
+        default: '3'
+
+permissions:
+  contents: write
+
+jobs:
+  run-solver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Solver
+        env:
+          LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
+          TEST_LIMIT: ${{ github.event.inputs.test_limit || '3' }}
+        run: python .github/scripts/leetcode_daily_10_sync.py
+      - name: Commit State and Solutions
+        run: |
+          git config --global user.name "SriramGandhiS"
+          git config --global user.email "iamramm8@gmail.com"
+          git add .
+          # Dynamically determine the first changed problem
+          CHANGED_FILES=$(git diff --cached --name-only dsa/)
+          if [ -z "$CHANGED_FILES" ]; then
+            CHANGED_FILES=$(git diff --name-only dsa/)
+          fi
+          
+          if [ -n "$CHANGED_FILES" ]; then
+            PROB_DIR=$(echo "$CHANGED_FILES" | head -n 1 | cut -d'/' -f2)
+            if [ -n "$PROB_DIR" ]; then
+              PROB_NAME=$(echo "$PROB_DIR" | sed -E 's/dsa [0-9]+ - //')
+              PROB_HUMAN=$(echo "$PROB_NAME" | tr '-' ' ')
+              COMMIT_MSG="feat: solve LeetCode problem - $PROB_HUMAN"
+            else
+              COMMIT_MSG="feat: solve LeetCode problems"
+            fi
+          else
+            COMMIT_MSG="feat: sync LeetCode progress"
+          fi
+          
+          git commit -m "$COMMIT_MSG" || echo "No changes"
+          git push origin main || echo "Push failed"
+      - name: Trigger Suriya Dummy Solver
+        env:
+          SURIYA_TOKEN: ${{ secrets.SURIYA_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: token $SURIYA_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/Suriyakumar4036/leetcode-stress-solver/actions/workflows/leetcode_dummy.yml/dispatches \
+            -d '{"ref":"main"}' || echo "Trigger failed"
