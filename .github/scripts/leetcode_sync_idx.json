@@ -51,11 +51,13 @@
     2198,
     866,
     3632,
-    4075
+    4075,
+    "4216",
+    2272
   ],
-  "today_date": "2026-06-12",
-  "today_count": 24,
-  "today_target": 24,
+  "today_date": "2026-06-13",
+  "today_count": 2,
+  "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
