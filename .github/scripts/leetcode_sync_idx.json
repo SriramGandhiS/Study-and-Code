@@ -59,10 +59,12 @@
     3546,
     2378,
     552,
-    2687
+    2687,
+    50,
+    381
   ],
   "today_date": "2026-06-13",
-  "today_count": 8,
+  "today_count": 10,
   "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
