@@ -203,8 +203,8 @@ def main():
         if status_code != 200 or not res or "submission_id" not in res:
             print(f"  Submission failed with status: {status_code}")
             if status_code == 429:
-                print("  Rate limited. Sleeping 30 seconds...")
-                time.sleep(30)
+                print("  Rate limited (account cooldown). Exiting run to avoid blocking main account solver.")
+                return
             continue
 
         sub_id = res["submission_id"]
