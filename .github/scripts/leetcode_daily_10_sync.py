@@ -612,7 +612,12 @@ def main():
         
         if not result or result.get("status_msg") != "Accepted":
             msg = result.get("status_msg") if result else "Timeout"
-            print(f"NOT accepted: {msg} — Skipping this problem.")
+            print(f"NOT accepted: {msg} — Marking as attempted to avoid resubmission.")
+            state["submitted_ids"].append(picked_problem["id"])
+            if os.path.dirname(IDX_PATH):
+                os.makedirs(os.path.dirname(IDX_PATH), exist_ok=True)
+            with open(IDX_PATH, "w") as f:
+                json.dump(state, f, indent=2)
             continue
             
         print(f"ACCEPTED! Runtime: {result.get('status_runtime')}, Memory: {result.get('status_memory')}")
