@@ -20,7 +20,7 @@ def fetch_csrf_token(session_cookie):
     req.add_header("Cookie", f"LEETCODE_SESSION={session_cookie};")
     req.add_header("User-Agent", "Mozilla/5.0")
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             cookies = r.info().get_all("Set-Cookie")
             if cookies:
                 for c in cookies:
@@ -43,7 +43,7 @@ def fetch_unsolved_problems():
     }
     req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             data = json.loads(r.read().decode("utf-8"))
     except Exception as e:
         print(f"Failed to fetch problems from API: {e}")

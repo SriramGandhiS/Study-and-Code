@@ -29,7 +29,7 @@ def fetch_csrf_token(session_cookie):
     req.add_header("Cookie", f"LEETCODE_SESSION={session_cookie};")
     req.add_header("User-Agent", "Mozilla/5.0")
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             cookies = r.info().get_all("Set-Cookie")
             if cookies:
                 for c in cookies:
@@ -55,7 +55,7 @@ def fetch_unsolved_problems():
     }
     req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             data = json.loads(r.read().decode("utf-8"))
     except Exception as e:
         print(f"Failed to fetch problems from API: {e}")
@@ -135,7 +135,7 @@ def fetch_problem_details(slug):
     }
     req = urllib.request.Request(url, data=json.dumps(query).encode("utf-8"), headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             res = json.loads(r.read().decode("utf-8"))
             q = res.get("data", {}).get("question", {})
             return q
@@ -176,7 +176,7 @@ def fetch_daily_challenge():
     }
     req = urllib.request.Request(url, data=json.dumps(query).encode("utf-8"), headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             res = json.loads(r.read().decode("utf-8"))
             return res.get("data", {}).get("activeDailyCodingChallengeQuestion", {})
     except Exception as e:
@@ -319,7 +319,7 @@ def make_submission(slug, question_id, code):
     data = {"lang": "java", "question_id": str(question_id), "typed_code": code}
     req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             body = r.read().decode("utf-8")
             return r.status, json.loads(body) if body else None
     except Exception as e:
@@ -332,7 +332,7 @@ def check_status(submission_id):
     req = urllib.request.Request(url, headers=headers)
     for _ in range(12):
         try:
-            with urllib.request.urlopen(req) as r:
+            with urllib.request.urlopen(req, timeout=15) as r:
                 res = json.loads(r.read().decode("utf-8"))
                 if res.get("state") == "SUCCESS":
                     return res
@@ -363,7 +363,7 @@ def perform_checkin(session_cookie, csrf_token):
     }
     req = urllib.request.Request(url, data=json.dumps(query).encode("utf-8"), headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req) as r:
+        with urllib.request.urlopen(req, timeout=15) as r:
             res = json.loads(r.read().decode("utf-8"))
             checkin_res = res.get("data", {}).get("checkin", {})
             if checkin_res.get("ok"):
