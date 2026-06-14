@@ -167,8 +167,8 @@ def main():
         state["today_count"] = 0
         state["today_target"] = 2000 # Max target to solve all as fast as possible
 
-    # Humanized run limit per hour run: 100 problems
-    run_limit = 100
+    # Humanized run limit per hour run: 200 problems
+    run_limit = 200
     print(f"Starting Third Account solver. Run limit this execution: {run_limit} problems.")
 
     unsolved = fetch_unsolved_problems()
@@ -224,8 +224,8 @@ def main():
         with open(IDX_PATH, "w") as f:
             json.dump(state, f, indent=2)
 
-        # Humanized delay: random 20-35 seconds between submissions to avoid rate limits
-        delay = random.randint(20, 35)
+        # Humanized delay: random 10-20 seconds between submissions to complete by morning
+        delay = random.randint(10, 20)
         print(f"  Sleeping {delay} seconds...")
         time.sleep(delay)
 
