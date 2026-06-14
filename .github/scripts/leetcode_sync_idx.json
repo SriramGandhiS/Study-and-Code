@@ -81,11 +81,12 @@
     3983,
     2680,
     2605,
-    964
+    964,
+    "2236"
   ],
-  "today_date": "2026-06-13",
-  "today_count": 30,
-  "today_target": 30,
+  "today_date": "2026-06-14",
+  "today_count": 1,
+  "today_target": 23,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
