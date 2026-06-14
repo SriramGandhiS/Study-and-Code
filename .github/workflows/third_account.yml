@@ -1,0 +1,38 @@
+name: Third Account High-Speed Solver
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # Runs every 15 minutes
+  workflow_dispatch:        # Allows manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  run-solver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyNaCl
+
+      - name: Run Solver
+        run: python .github/scripts/third_account_solver.py
+
+      - name: Commit Progress
+        run: |
+          git config --global user.name "SriramBot"
+          git config --global user.email "bot@sriramgandhi.com"
+          git add .github/scripts/third_account_sync_idx.json
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "build: sync third account leetcode progress"
+            git pull --rebase origin main
+            git push origin main
+          fi
