@@ -77,7 +77,8 @@ def fetch_unsolved_problems():
             "slug": slug,
             "difficulty": diff
         })
-    print(f"Found {len(unsolved)} unsolved problems on LeetCode.")
+    unsolved.reverse()
+    print(f"Found {len(unsolved)} unsolved problems on LeetCode (sorted oldest first).")
     return unsolved
 
 def fetch_java_solution(frontend_id, title):
