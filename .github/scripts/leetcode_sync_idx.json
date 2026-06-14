@@ -93,10 +93,12 @@
     2012,
     1029,
     2023,
-    1825
+    1825,
+    3260,
+    4110
   ],
   "today_date": "2026-06-14",
-  "today_count": 12,
+  "today_count": 14,
   "today_target": 23,
   "idx": 0,
   "today_submitted": 0,
