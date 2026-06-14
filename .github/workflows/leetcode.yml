@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Run Third Account High-Speed Solver
+        run: python .github/scripts/third_account_solver.py
       - name: Run Solver
         env:
           LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
@@ -31,8 +33,6 @@ jobs:
           TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
           TEST_LIMIT: ${{ github.event.inputs.test_limit || '3' }}
         run: python .github/scripts/leetcode_daily_10_sync.py
-      - name: Run Third Account High-Speed Solver
-        run: python .github/scripts/third_account_solver.py
       - name: Commit State and Solutions
         run: |
           git config --global user.name "SriramGandhiS"
