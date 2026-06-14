@@ -167,8 +167,8 @@ def main():
         state["today_count"] = 0
         state["today_target"] = 2000 # Max target to solve all as fast as possible
 
-    # Max speed run limit per run: 50 problems
-    run_limit = 50
+    # Max speed run limit per run: 300 problems
+    run_limit = 300
     print(f"Starting Third Account solver. Run limit this execution: {run_limit} problems.")
 
     unsolved = fetch_unsolved_problems()
