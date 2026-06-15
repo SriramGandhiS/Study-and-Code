@@ -114,10 +114,12 @@
     3382,
     3372,
     34,
-    2669
+    2669,
+    2290,
+    1706
   ],
   "today_date": "2026-06-15",
-  "today_count": 8,
+  "today_count": 10,
   "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
