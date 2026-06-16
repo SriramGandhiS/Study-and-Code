@@ -137,11 +137,13 @@
     109,
     759,
     2849,
-    2827
+    2827,
+    "3931",
+    881
   ],
-  "today_date": "2026-06-15",
-  "today_count": 30,
-  "today_target": 30,
+  "today_date": "2026-06-16",
+  "today_count": 2,
+  "today_target": 28,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
