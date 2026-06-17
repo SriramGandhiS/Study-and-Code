@@ -166,11 +166,13 @@
     2300,
     143,
     2457,
-    3645
+    3645,
+    "3939",
+    904
   ],
-  "today_date": "2026-06-16",
-  "today_count": 28,
-  "today_target": 28,
+  "today_date": "2026-06-17",
+  "today_count": 2,
+  "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
