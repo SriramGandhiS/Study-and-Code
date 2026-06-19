@@ -219,11 +219,13 @@
     4249,
     1393,
     2166,
-    3781
+    3781,
+    "1833",
+    2726
   ],
-  "today_date": "2026-06-18",
-  "today_count": 21,
-  "today_target": 21,
+  "today_date": "2026-06-19",
+  "today_count": 2,
+  "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
