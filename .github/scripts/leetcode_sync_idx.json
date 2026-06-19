@@ -225,10 +225,12 @@
     2676,
     1669,
     525,
-    3395
+    3395,
+    1451,
+    2508
   ],
   "today_date": "2026-06-19",
-  "today_count": 6,
+  "today_count": 8,
   "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
