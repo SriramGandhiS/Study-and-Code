@@ -253,10 +253,12 @@
     367,
     "1968",
     3376,
-    969
+    969,
+    1208,
+    1007
   ],
   "today_date": "2026-06-20",
-  "today_count": 2,
+  "today_count": 4,
   "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
