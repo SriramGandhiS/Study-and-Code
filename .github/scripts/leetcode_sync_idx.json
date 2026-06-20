@@ -255,10 +255,12 @@
     3376,
     969,
     1208,
-    1007
+    1007,
+    211,
+    4204
   ],
   "today_date": "2026-06-20",
-  "today_count": 4,
+  "today_count": 6,
   "today_target": 30,
   "idx": 0,
   "today_submitted": 0,
