@@ -281,11 +281,12 @@
     3854,
     124,
     202,
-    2601
+    2601,
+    "1961"
   ],
-  "today_date": "2026-06-20",
-  "today_count": 30,
-  "today_target": 30,
+  "today_date": "2026-06-21",
+  "today_count": 1,
+  "today_target": 21,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
