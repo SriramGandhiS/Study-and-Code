@@ -296,11 +296,12 @@
     3866,
     1037,
     1906,
-    2583
+    2583,
+    3964
   ],
   "today_date": "2026-06-24",
-  "today_count": 0,
-  "today_target": 2,
+  "today_count": 1,
+  "today_target": 1,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
