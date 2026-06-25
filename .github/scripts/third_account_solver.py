@@ -154,7 +154,7 @@ def main():
         return
     CSRF_TOKEN = token
 
-    state = {"submitted_ids": [], "today_date": "", "today_count": 0, "today_target": 2000}
+    state = {"submitted_ids": [], "today_date": "", "today_count": 0, "today_target": 1}
     if os.path.exists(IDX_PATH):
         try:
             with open(IDX_PATH, "r") as f:
@@ -166,10 +166,17 @@ def main():
     if state.get("today_date") != today:
         state["today_date"] = today
         state["today_count"] = 0
-        state["today_target"] = 2000 # Max target to solve all as fast as possible
+        # Organic pace: 1 problem most days, 2 occasionally
+        state["today_target"] = 2 if random.random() < 0.25 else 1
 
-    # Super high speed limit: 600 problems to complete all tonight
-    run_limit = 600
+    today_count = state.get("today_count", 0)
+    today_target = state.get("today_target", 1)
+
+    if today_count >= today_target:
+        print(f"Already hit today's target of {today_target}. Skipping.")
+        return
+
+    run_limit = today_target - today_count
     print(f"Starting Third Account solver. Run limit this execution: {run_limit} problems.")
 
     unsolved = fetch_unsolved_problems()
@@ -225,8 +232,8 @@ def main():
         with open(IDX_PATH, "w") as f:
             json.dump(state, f, indent=2)
 
-        # Fast humanized delay: random 5-10 seconds between submissions to finish tonight
-        delay = random.randint(5, 10)
+        # Organic delay between submissions
+        delay = random.randint(30, 90)
         print(f"  Sleeping {delay} seconds...")
         time.sleep(delay)
 

@@ -412,7 +412,12 @@ def main():
         
         # Choose new target if it's a new day
         if state.get("today_date") != today:
-            target = random.randint(20, 30)
+            # Organic pace: 1 problem most days, occasionally 2
+            roll_double = random.random()
+            if roll_double < 0.25:  # 25% chance of 2 problems in a day
+                target = 2
+            else:
+                target = 1
             state["today_date"] = today
             state["today_count"] = 0
             state["today_target"] = target
@@ -423,7 +428,7 @@ def main():
                 json.dump(state, f, indent=2)
                 
         today_count = state.get("today_count", 0)
-        today_target = state.get("today_target", 24)
+        today_target = state.get("today_target", 1)
         
         print(f"Daily progress: {today_count}/{today_target} solved today.")
         
@@ -432,20 +437,16 @@ def main():
             return
             
         remaining_problems = today_target - today_count
-        current_hour = datetime.datetime.utcnow().hour
-        remaining_hours = 24 - current_hour
         
-        print(f"Remaining problems: {remaining_problems}, Remaining hours today: {remaining_hours}")
+        print(f"Remaining problems: {remaining_problems}")
         
-        # Per run, aim to submit 2-3 problems to hit 20-30 daily
-        hours_remaining = max(1, 24 - datetime.datetime.utcnow().hour)
-        needed_per_run = max(1, -(-remaining_problems // hours_remaining))  # ceil div
-        run_count = min(3, max(1, needed_per_run))
+        # Per run: only solve 1 problem at a time
+        run_count = 1
         
         roll = random.random()
-        prob = min(1.0, remaining_problems / max(1, hours_remaining))
-        should_run = roll < prob or remaining_problems >= hours_remaining
-        print(f"Prob={prob:.2f} roll={roll:.2f} -> {'RUN' if should_run else 'SKIP'} | run_count={run_count}")
+        # ~60% chance to run on any given hourly trigger to space it out organically
+        should_run = roll < 0.60
+        print(f"roll={roll:.2f} -> {'RUN' if should_run else 'SKIP'} | run_count={run_count}")
             
         if not should_run:
             print("Decided to skip this hour. Spacing out runs.")
