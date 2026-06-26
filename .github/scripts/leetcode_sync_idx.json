@@ -298,11 +298,12 @@
     1906,
     2583,
     3964,
-    "4074"
+    "4074",
+    "4075"
   ],
-  "today_date": "2026-06-25",
+  "today_date": "2026-06-26",
   "today_count": 1,
-  "today_target": 2,
+  "today_target": 1,
   "idx": 0,
   "today_submitted": 0,
   "last_date": ""
