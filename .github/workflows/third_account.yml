@@ -24,6 +24,7 @@ jobs:
           pip install PyNaCl
 
       - name: Run Solver
+        continue-on-error: true
         run: python .github/scripts/third_account_solver.py
 
       - name: Commit Progress
