@@ -10,7 +10,6 @@ import datetime
 # =========================================================================
 # CONFIGURATION & FALLBACKS
 # =========================================================================
-# Default fallback credentials from user session
 FALLBACK_SESSION = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfYXV0aF91c2VyX2lkIjoiMTEzNTkyMTgiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJhbGxhdXRoLmFjY291bnQuYXV0aF9iYWNrZW5kcy5BdXRoZW50aWNhdGlvbkJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJhZWFkY2E4OWJhMTQxNzcwZTRmODJlMDBmODhjMjVhOGMzYjJkODMzYzA4ZDQyZTQ0NTExNjZhNDU1NmU1MzU1Iiwic2Vzc2lvbl91dWlkIjoiMGNjMjJhOGMiLCJpZCI6MTEzNTkyMTgsImVtYWlsIjoiaWFtcmFtbThAZ21haWwuY29tIiwidXNlcm5hbWUiOiJpYW1yYW1tOCIsInVzZXJfc2x1ZyI6ImlhbXJhbW04IiwiYXZhdGFyIjoiaHR0cHM6Ly9hc3NldHMubGVldGNvZGUuY29tL3VzZXJzL2lhbXJhbW04L2F2YXRhcl8xNzgxMTg2NTQzLnBuZyIsInJlZnJlc2hlZF9hdCI6MTc4NDM1NjE1NywiaXAiOiIyNDA2Ojc0MDA6Y2E6NWRmMTo3NWQzOjUyMjA6ZDJmNzo5NjQwIiwiaWRlbnRpdHkiOiJjMzNjNTg4MDA5Yjk1NTcwYmRhMTQyY2ExOGQzNjNkMiIsImRldmljZV93aXRoX2lwIjpbImNkNGIyYmMyODUxNGExZjQ4ZmVhNTYwOTk3MDE0NTcwIiwiMjQwNjo3NDAwOmNhOjVkZjE6NzVkMzo1MjIwOmQyZjc6OTY0MCJdfQ.9Ur1m5A2_XXPSc28AqLkGIo9eVSa7vvLJBJyBwho-t0"
 FALLBACK_CSRF    = "16hLpJKo9vMB0I7FGCj4tZvjGCpKOxIe"
 
@@ -42,109 +41,7 @@ def fetch_csrf_token(session_cookie):
     return None
 
 # =========================================================================
-# 2. LIVE LEETCODE API - GET UNSOLVED PROBLEMS WITH DETAILS
-# =========================================================================
-def fetch_unsolved_problems():
-    print("Fetching problems from LeetCode API...")
-    url = "https://leetcode.com/api/problems/all/"
-    headers = {
-        "cookie": f"LEETCODE_SESSION={LEETCODE_SESSION}; csrftoken={CSRF_TOKEN};",
-        "x-csrftoken": CSRF_TOKEN,
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "referer": "https://leetcode.com/"
-    }
-    req = urllib.request.Request(url, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=15) as r:
-            data = json.loads(r.read().decode("utf-8"))
-    except Exception as e:
-        print(f"Failed to fetch problems from API: {e}")
-        return []
-
-    stat_pairs = data.get("stat_status_pairs", [])
-    unsolved = []
-    
-    for pair in stat_pairs:
-        # Skip paid-only problems
-        if pair.get("paid_only", False):
-            continue
-            
-        # status can be 'ac' (solved) or 'notac' or None
-        status = pair.get("status")
-        if status == "ac":
-            continue
-            
-        stat = pair.get("stat", {})
-        difficulty = pair.get("difficulty", {})
-        
-        q_id = stat.get("question_id")
-        frontend_id = stat.get("frontend_question_id")
-        title = stat.get("question__title")
-        slug = stat.get("question__title_slug")
-        level_num = difficulty.get("level")  # 1 = Easy, 2 = Medium, 3 = Hard
-        
-        if level_num == 1:
-            diff = "EASY"
-        elif level_num == 2:
-            diff = "MEDIUM"
-        else:
-            diff = "HARD"
-            
-        unsolved.append({
-            "id": q_id,
-            "frontend_id": frontend_id,
-            "title": title,
-            "slug": slug,
-            "difficulty": diff
-        })
-        
-    print(f"Found {len(unsolved)} unsolved problems on LeetCode.")
-    return unsolved
-
-def fetch_problem_details(slug):
-    print(f"Fetching problem details for {slug} via GraphQL...")
-    url = "https://leetcode.com/graphql/"
-    headers = {
-        "cookie": f"LEETCODE_SESSION={LEETCODE_SESSION}; csrftoken={CSRF_TOKEN};",
-        "x-csrftoken": CSRF_TOKEN,
-        "content-type": "application/json",
-        "referer": f"https://leetcode.com/problems/{slug}/description/",
-        "user-agent": "Mozilla/5.0"
-    }
-    query = {
-        "query": """
-        query questionData($titleSlug: String!) {
-          question(titleSlug: $titleSlug) {
-            questionId
-            questionFrontendId
-            title
-            titleSlug
-            content
-            difficulty
-            codeSnippets {
-              lang
-              langSlug
-              code
-            }
-          }
-        }
-        """,
-        "variables": {
-            "titleSlug": slug
-        }
-    }
-    req = urllib.request.Request(url, data=json.dumps(query).encode("utf-8"), headers=headers, method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=15) as r:
-            res = json.loads(r.read().decode("utf-8"))
-            q = res.get("data", {}).get("question", {})
-            return q
-    except Exception as e:
-        print(f"Failed to fetch problem details: {e}")
-        return None
-
-# =========================================================================
-# 3. LEETCODE DAILY CODING CHALLENGE
+# 2. LEETCODE DAILY CODING CHALLENGE
 # =========================================================================
 def fetch_daily_challenge():
     print("Fetching LeetCode Daily Coding Challenge...")
@@ -184,10 +81,9 @@ def fetch_daily_challenge():
         return None
 
 # =========================================================================
-# 4. DYNAMIC SOLUTIONS SCRAPER (WALKCCC & DOOCS)
+# 3. DYNAMIC SOLUTIONS SCRAPER (WALKCCC & DOOCS)
 # =========================================================================
 def fetch_solution_from_walkccc(frontend_id, title):
-    # walkccc format: solutions/{id}. {title}/{id}.java
     variations = [
         f"{frontend_id}. {title}/{frontend_id}.java",
         f"{frontend_id}. {title.replace('-', ' ')}/{frontend_id}.java",
@@ -203,12 +99,11 @@ def fetch_solution_from_walkccc(frontend_id, title):
                 if "class " in code:
                     print(f"Successfully fetched solution from walkccc!")
                     return code
-        except Exception as e:
+        except Exception:
             pass
     return None
 
 def fetch_solution_from_doocs(frontend_id_str, title):
-    # doocs format: solution/{range}/{padded_id}.{title}/Solution.java
     try:
         frontend_id = int(frontend_id_str)
     except:
@@ -234,7 +129,7 @@ def fetch_solution_from_doocs(frontend_id_str, title):
                 if "class " in code:
                     print(f"Successfully fetched solution from doocs!")
                     return code
-        except Exception as e:
+        except Exception:
             pass
     return None
 
@@ -248,7 +143,7 @@ def fetch_java_solution(frontend_id, title):
     return None
 
 # =========================================================================
-# 5. GEMINI SOLVER FALLBACK
+# 4. GEMINI / GROQ SOLVER FALLBACK
 # =========================================================================
 def solve_with_groq(frontend_id, title, difficulty, content):
     api_key = os.environ.get("GROQ_API_KEY") or ("gsk_" + "283r1m" + "MpqUMu" + "T70aTU" + "YrWGdy" + "b3FY9f" + "cVxoE8" + "0obtfw" + "UDpEek" + "El08")
@@ -261,7 +156,7 @@ def solve_with_groq(frontend_id, title, difficulty, content):
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0"
     }
     
     prompt = (
@@ -347,7 +242,6 @@ def solve_with_gemini(frontend_id, title, difficulty, content):
                     else:
                         code = text.strip()
                     
-                    # Auto-correction post-processing for common LLM array syntax errors in Java
                     code = code.replace("edges.size()", "edges.length")
                     code = code.replace("edges.length()", "edges.length")
                     return code
@@ -358,7 +252,7 @@ def solve_with_gemini(frontend_id, title, difficulty, content):
     return solve_with_groq(frontend_id, title, difficulty, content)
 
 # =========================================================================
-# 6. LEETCODE SUBMISSION
+# 5. LEETCODE SUBMISSION
 # =========================================================================
 def make_submission(slug, question_id, code):
     url = f"https://leetcode.com/problems/{slug}/submit/"
@@ -367,7 +261,7 @@ def make_submission(slug, question_id, code):
         "cookie":       f"LEETCODE_SESSION={LEETCODE_SESSION}; csrftoken={CSRF_TOKEN};",
         "referer":      f"https://leetcode.com/problems/{slug}/description/",
         "content-type": "application/json",
-        "user-agent":   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+        "user-agent":   "Mozilla/5.0"
     }
     data = {"lang": "java", "question_id": str(question_id), "typed_code": code}
     req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
@@ -427,11 +321,11 @@ def perform_checkin(session_cookie, csrf_token):
         print(f"Daily check-in failed: {e}")
 
 # =========================================================================
-# 7. SCHEDULER & MAIN FLOW
+# 6. MAIN FLOW
 # =========================================================================
 def main():
     global CSRF_TOKEN
-    print(f"=== LeetCode Fully Autonomous Solver started at {datetime.datetime.utcnow().isoformat()} ===")
+    print(f"=== LeetCode Daily Streak Protector started at {datetime.datetime.utcnow().isoformat()} ===")
     
     # 1. Dynamically retrieve the CSRF token to prevent 403 Forbidden errors
     dynamic_csrf = fetch_csrf_token(LEETCODE_SESSION)
@@ -455,124 +349,92 @@ def main():
             pass
             
     test_mode = os.environ.get("TEST_MODE") == "true"
-    test_limit = int(os.environ.get("TEST_LIMIT", "3"))
     
-    if test_mode:
-        print(f"TEST_MODE is enabled! Will attempt to solve {test_limit} problems immediately.")
-        run_count = test_limit
-    else:
+    if not test_mode:
         today = datetime.datetime.utcnow().strftime("%Y-%m-%d")
         
-        # Choose new target if it's a new day
+        # Reset count if it's a new day
         if state.get("today_date") != today:
-            # Organic pace: 1 problem most days, occasionally 2
-            roll_double = random.random()
-            if roll_double < 0.25:  # 25% chance of 2 problems in a day
-                target = 2
-            else:
-                target = 1
             state["today_date"] = today
             state["today_count"] = 0
-            state["today_target"] = target
-            print(f"New day initialized. Daily target: {target} problems.")
+            state["today_target"] = 1
+            print(f"New day initialized. Daily target: 1 daily challenge.")
             if os.path.dirname(IDX_PATH):
                 os.makedirs(os.path.dirname(IDX_PATH), exist_ok=True)
             with open(IDX_PATH, "w") as f:
                 json.dump(state, f, indent=2)
                 
         today_count = state.get("today_count", 0)
-        today_target = state.get("today_target", 1)
         
-        print(f"Daily progress: {today_count}/{today_target} solved today.")
-        
-        if today_count >= today_target:
-            print(f"Already completed daily target of {today_target} problems. Skipping.")
+        if today_count >= 1:
+            print("Already completed daily challenge today. Skipping.")
             return
-            
-        remaining_problems = today_target - today_count
-        
-        print(f"Remaining problems: {remaining_problems}")
-        
-        # Per run: only solve 1 problem at a time
-        run_count = 1
-        
-        # Always run immediately to ensure the daily challenge is solved on the very first trigger of the day.
-        should_run = True
-        print(f"Always RUN daily challenge solver | run_count={run_count}")
             
         # Light randomized delay (1 to 10 minutes)
         delay = random.randint(60, 600)
         print(f"Organic delay: Sleeping {delay} seconds...")
         time.sleep(delay)
-        
-    solved_in_this_run = 0
 
     # -------------------------------------------------------------------------
-    # STEP A: SOLVE LEETCODE DAILY CODING CHALLENGE (STREAK AND BADGES)
+    # SOLVE LEETCODE DAILY CODING CHALLENGE
     # -------------------------------------------------------------------------
-    if not test_mode:
-        daily_challenge = fetch_daily_challenge()
-        if daily_challenge:
-            date_challenge = daily_challenge.get("date")
-            user_status = daily_challenge.get("userStatus")
-            q_info = daily_challenge.get("question", {})
-            slug = q_info.get("titleSlug")
-            frontend_id = q_info.get("questionFrontendId")
-            q_id = q_info.get("questionId")
-            title = q_info.get("title")
-            difficulty = q_info.get("difficulty")
-            content = q_info.get("content")
+    daily_challenge = fetch_daily_challenge()
+    if daily_challenge:
+        date_challenge = daily_challenge.get("date")
+        user_status = daily_challenge.get("userStatus")
+        q_info = daily_challenge.get("question", {})
+        slug = q_info.get("titleSlug")
+        frontend_id = q_info.get("questionFrontendId")
+        q_id = q_info.get("questionId")
+        title = q_info.get("title")
+        difficulty = q_info.get("difficulty")
+        content = q_info.get("content")
 
-            print(f"\n--- LeetCode Daily Coding Challenge ({date_challenge}) ---")
-            print(f"Problem: #{frontend_id} - {title} ({difficulty})")
-            print(f"Status: {user_status}")
+        print(f"\n--- LeetCode Daily Coding Challenge ({date_challenge}) ---")
+        print(f"Problem: #{frontend_id} - {title} ({difficulty})")
+        print(f"Status: {user_status}")
 
-            if user_status == "Finish":
-                print("Daily Coding Challenge is already solved! Streak is safe. [OK]")
-            elif not slug:
-                print("Could not retrieve daily challenge slug.")
-            else:
-                print("Daily Coding Challenge is NOT solved. Solving it now to protect streak! [RUN]")
-                # 1. Try public solutions walkccc/doocs
-                code = fetch_java_solution(frontend_id, title)
-                if not code:
-                    # 2. Fallback to Gemini LLM generation
-                    code = solve_with_gemini(frontend_id, title, difficulty, content)
+        if user_status == "Finish":
+            print("Daily Coding Challenge is already solved! Streak is safe. [OK]")
+        elif not slug:
+            print("Could not retrieve daily challenge slug.")
+        else:
+            print("Daily Coding Challenge is NOT solved. Solving it now to protect streak! [RUN]")
+            code = fetch_java_solution(frontend_id, title)
+            if not code:
+                code = solve_with_gemini(frontend_id, title, difficulty, content)
 
-                if code:
-                    # Auto-correction post-processing for common array syntax errors in Java (fixes walkccc/doocs/Gemini issues)
-                    code = code.replace("edges.size()", "edges.length")
-                    code = code.replace("edges.length()", "edges.length")
-                    
-                    print("Submitting Daily Challenge solution to LeetCode...")
-                    status, res = make_submission(slug, q_id, code)
-                    if status == 200 and res and "submission_id" in res:
-                        sub_id = res["submission_id"]
-                        print(f"Daily Challenge Submission ID: {sub_id}, checking result...")
-                        result = check_status(sub_id)
-                        if result and result.get("status_msg") == "Accepted":
-                            print(f"DAILY CHALLENGE ACCEPTED! Streak incremented! [SUCCESS]")
-                            # Save locally
-                            local_dir = f"dsa/dsa {frontend_id} - {slug}"
-                            os.makedirs(local_dir, exist_ok=True)
-                            with open(f"{local_dir}/Solution.java", "w", encoding="utf-8") as f:
-                                f.write(code)
-                            
-                            # Track state
-                            state["submitted_ids"].append(q_id)
-                            state["today_count"] += 1
-                            solved_in_this_run += 1
-                            with open(IDX_PATH, "w") as f:
-                                json.dump(state, f, indent=2)
-                        else:
-                            msg = result.get("status_msg") if result else "Timeout"
-                            print(f"Daily Challenge submission NOT accepted: {msg}")
+            if code:
+                code = code.replace("edges.size()", "edges.length")
+                code = code.replace("edges.length()", "edges.length")
+                
+                print("Submitting Daily Challenge solution to LeetCode...")
+                status, res = make_submission(slug, q_id, code)
+                if status == 200 and res and "submission_id" in res:
+                    sub_id = res["submission_id"]
+                    print(f"Daily Challenge Submission ID: {sub_id}, checking result...")
+                    result = check_status(sub_id)
+                    if result and result.get("status_msg") == "Accepted":
+                        print(f"DAILY CHALLENGE ACCEPTED! Streak incremented! [SUCCESS]")
+                        # Save locally
+                        local_dir = f"dsa/dsa {frontend_id} - {slug}"
+                        os.makedirs(local_dir, exist_ok=True)
+                        with open(f"{local_dir}/Solution.java", "w", encoding="utf-8") as f:
+                            f.write(code)
+                        
+                        # Track state
+                        state["submitted_ids"].append(q_id)
+                        state["today_count"] = 1
+                        with open(IDX_PATH, "w") as f:
+                            json.dump(state, f, indent=2)
                     else:
-                        print(f"Failed to submit Daily Challenge: {status}")
+                        msg = result.get("status_msg") if result else "Timeout"
+                        print(f"Daily Challenge submission NOT accepted: {msg}")
                 else:
-                    print("Failed to find or generate solution for LeetCode Daily Challenge.")
+                    print(f"Failed to submit Daily Challenge: {status}")
+            else:
+                print("Failed to find or generate solution for LeetCode Daily Challenge.")
 
-    # Step B removed: Daily Streak Challenge only mode is active.
     print("=== Completed. Daily challenge processed. ===")
 
 if __name__ == "__main__":
